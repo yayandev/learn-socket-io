@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn Socket io</title>
+  </head>
+  <body>
+    <h1>Socket io</h1>
+    <form action="" id="form">
+      <ul id="messages" style="height: 200px; overflow-y: scroll"></ul>
+      <input type="text" id="input" />
+      <button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let username = prompt("Enter your name");
+      if (!username) {
+        username = "Guest" + Math.round(Math.random() * 1000);
+      }
+      const socket = io();
+      socket.emit("user", username);
+
+      const form = document.getElementById("form");
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit("chat message", { msg: input.value, username: username });
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", (value) => {
+        const item = document.createElement("li");
+        const item2 = document.createElement("h3");
+        const item3 = document.createElement("p");
+        item2.textContent = value.sender;
+        item3.textContent = value.message;
+        item.append(item2, item3);
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
